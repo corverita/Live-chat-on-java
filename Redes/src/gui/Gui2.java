@@ -11,7 +11,10 @@ import java.net.DatagramSocket;
 import javax.swing.*;
 
 import static javax.swing.JOptionPane.showMessageDialog;
+
+import cliente.tcp.ClienteEnviaTCP;
 import cliente.udp.*;
+import servidor.tcp.ServidorEscuchaTCP;
 import servidor.udp.ServidorEscuchaUDP;
 
 /**
@@ -22,20 +25,40 @@ public class Gui2 extends javax.swing.JFrame {
     File file;
     FileReader lecturaArchivo;
     ClienteEnviaUDP clienteEnviaUDP;
+    ClienteEnviaTCP clienteEnviaTCP;
     ServidorEscuchaUDP servidorEscuchaUDP;
+    ServidorEscuchaTCP servidorEscuchaTCP;
     JTextArea textAreaRecibidos;
     JTextArea textAreaEnviados;
 
     /**
      * Creates new form Gui
      */
-    public Gui2(DatagramSocket socketEscucha, String ipServer, int puertoServer) throws Exception {
+    public Gui2(DatagramSocket socketEscucha, String ipServer, int puertoServerMensajes, int puertoClienteMensajes) throws Exception {
         initComponents();
         labelRuta.setText("No hay un archivo seleccionados");
-        clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServer);
-        servidorEscuchaUDP =new ServidorEscuchaUDP(50001,textAreaRecibidos,textAreaEnviados);
+        clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServerMensajes);
+        servidorEscuchaUDP =new ServidorEscuchaUDP(puertoClienteMensajes,textAreaRecibidos,textAreaEnviados);
         servidorEscuchaUDP.start();
     }
+
+    public void iniciaServidorTCP(int puertoClienteArchivos){
+        try {
+            servidorEscuchaTCP=new ServidorEscuchaTCP(puertoClienteArchivos);
+            servidorEscuchaTCP.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void iniciaClienteTCP(String ipServer, int puertoServerArchivos){
+        try {
+            clienteEnviaTCP=new ClienteEnviaTCP(ipServer,puertoServerArchivos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -251,6 +274,9 @@ public class Gui2 extends javax.swing.JFrame {
 
     private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarArchivoActionPerformed
         if(file!=null){
+            clienteEnviaTCP.enviarArchivo(file);
+            file=null;
+            labelRuta.setText("No hay un archivo seleccionados");
             //Proceder a enviarlo
         }else{
             //No enviarlo, cancelarlo y dar un warning

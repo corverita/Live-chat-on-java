@@ -12,28 +12,29 @@ import javax.swing.*;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 import cliente.udp.*;
+import servidor.udp.ServidorEscuchaUDP;
 
 /**
  *
  * @author oscar
  */
-public class Gui extends javax.swing.JFrame {
+public class Gui1 extends javax.swing.JFrame {
     File file;
     FileReader lecturaArchivo;
 	ClienteEnviaUDP clienteEnviaUDP;
-	ClienteEscuchaUDP clienteEscuchaUDP;
+	ServidorEscuchaUDP servidorEscuchaUDP;
 	JTextArea textAreaRecibidos;
 	JTextArea textAreaEnviados;
     
     /**
      * Creates new form Gui
      */
-    public Gui(DatagramSocket socketEscucha, String ipServer, int puertoServer) {
+    public Gui1(DatagramSocket socketEscucha, String ipServer, int puertoServer) throws Exception {
         initComponents();
         labelRuta.setText("No hay un archivo seleccionados");
 		clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServer);
-		clienteEscuchaUDP=new ClienteEscuchaUDP(socketEscucha,textAreaRecibidos,textAreaEnviados);
-		clienteEscuchaUDP.start();
+		servidorEscuchaUDP =new ServidorEscuchaUDP(50000,textAreaRecibidos,textAreaEnviados);
+		servidorEscuchaUDP.start();
     }
 
     /**

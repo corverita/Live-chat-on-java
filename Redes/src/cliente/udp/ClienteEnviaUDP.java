@@ -31,9 +31,6 @@ public class ClienteEnviaUDP{
             mensaje_bytes = mensaje.getBytes();
             paquete = new DatagramPacket(mensaje_bytes,mensaje.length(),address,PUERTO_SERVER);
             socket.send(paquete);
-
-            String mensajeMandado=new String(paquete.getData(),0,paquete.getLength()).trim();
-            System.out.println("Mensaje \""+ mensajeMandado + "\" enviado a "+paquete.getAddress() + "#"+paquete.getPort());
         }
         catch (Exception e) {
             System.err.println("Exception "+e.getMessage());

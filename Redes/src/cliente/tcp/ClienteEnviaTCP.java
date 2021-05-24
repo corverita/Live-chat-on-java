@@ -24,7 +24,7 @@ public class ClienteEnviaTCP{
         
         // Instanciamos un socket con la dirección del destino y el
         // puerto que vamos a utilizar para la comunicación
-        socket = new Socket(SERVER,PUERTO_SERVER);
+//        socket = new Socket(SERVER,PUERTO_SERVER);
         
         // Declaramos e instanciamos el objeto DataOutputStream
         // que nos valdrá para enviar datos al servidor destino
@@ -33,6 +33,7 @@ public class ClienteEnviaTCP{
 
     public void enviarArchivo(File archivo){
         try{
+            socket = new Socket(SERVER,PUERTO_SERVER);
             bis= new BufferedInputStream(new FileInputStream(archivo));
             dos = new DataOutputStream(socket.getOutputStream());
 
@@ -51,7 +52,8 @@ public class ClienteEnviaTCP{
             System.out.println("Enviado: "+archivo.getName());
             bis.close();
             dos.close();
-//            bos.close();
+
+            socket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

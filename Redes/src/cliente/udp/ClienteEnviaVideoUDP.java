@@ -11,6 +11,7 @@ import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
 
 //declaramos la clase udp envia
 public class ClienteEnviaVideoUDP extends Thread{
@@ -29,7 +30,6 @@ public class ClienteEnviaVideoUDP extends Thread{
 	protected final String SERVER;
 
 	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws UnknownHostException, SocketException {
-		socket=new DatagramSocket();
 		SERVER=servidor;
 		PUERTO_SERVER=puertoServidor;
 		address=InetAddress.getByName(SERVER);
@@ -39,6 +39,7 @@ public class ClienteEnviaVideoUDP extends Thread{
 
 	public void run(){
 		try{
+			socket=new DatagramSocket();
 			webcam=Webcam.getDefault();
 			webcam.setViewSize(new Dimension(176,144));
 			webcam.open();
@@ -57,8 +58,6 @@ public class ClienteEnviaVideoUDP extends Thread{
 				comprimido=compress(comprimido);
 				comprimido=compress(comprimido);
 
-				System.out.println(comprimido.length);
-
 				paquete = new DatagramPacket(comprimido,comprimido.length,address,PUERTO_SERVER);
 				socket.send(paquete);
 
@@ -70,14 +69,17 @@ public class ClienteEnviaVideoUDP extends Thread{
 	}
 
 	public void detener() throws IOException {
-		activo=false;
-		webcam.close();
-		String valorSalida="-1";
-		byte[] bytes=valorSalida.getBytes(StandardCharsets.UTF_8);
-		DatagramPacket paqueteSalida=new DatagramPacket(bytes, bytes.length,address,PUERTO_SERVER);
-		socket.send(paqueteSalida);
-		videoUsuario.setIcon(null);
-		stop();
+		if(activo) {
+			activo = false;
+			webcam.close();
+			String valorSalida = "-1";
+			byte[] bytes = valorSalida.getBytes(StandardCharsets.UTF_8);
+			DatagramPacket paqueteSalida = new DatagramPacket(bytes, bytes.length, address, PUERTO_SERVER);
+			socket.send(paqueteSalida);
+			videoUsuario.setIcon(null);
+			socket.close();
+			stop();
+		}
 	}
 
 	public static byte[] compress(byte[] in) {
@@ -87,7 +89,6 @@ public class ClienteEnviaVideoUDP extends Thread{
 			defl.write(in);
 			defl.flush();
 			defl.close();
-
 			return out.toByteArray();
 		} catch (Exception e) {
 			e.printStackTrace();

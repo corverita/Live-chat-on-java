@@ -42,12 +42,9 @@ public class Gui1 extends javax.swing.JFrame {
         initComponents();
         this.ipServer=ipServer;
         labelRuta.setText("No hay un archivo seleccionados");
-
         webcamGUI=new WebcamGUI(ipServer,puertoServerVideo,puertoClienteVideo);
 		clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServerMensajes);
-
 		servidorEscuchaUDP =new ServidorEscuchaUDP(puertoClienteMensajes,textAreaRecibidos,textAreaEnviados);
-
 		puertoServidorArchivos=puertoServerArchivos;
 		servidorEscuchaUDP.start();
     }

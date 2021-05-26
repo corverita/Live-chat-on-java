@@ -10,22 +10,17 @@ import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterOutputStream;
 
 import static com.github.sarxos.webcam.util.ImageUtils.toByteArray;
 
 //declaramos la clase udp envia
 public class ServidorEscuchaVideoUDP extends Thread {
-    protected BufferedReader in;
     //Definimos el sockets, número de bytes del buffer, y mensaje.
-    protected final int MAX_BUFFER = 256;
     protected DatagramSocket socket;
     protected DatagramPacket paquete;
-    private Webcam webcam;
-    private BufferedImage bufferedImg;
     private ImageIcon drawImg;
-    private JFrame frame;
-    private JLabel label;
     private JLabel videoServidor;
 
     public ServidorEscuchaVideoUDP(int puertoServidor, JLabel webcamServidor) throws SocketException, UnknownHostException {
@@ -53,9 +48,6 @@ public class ServidorEscuchaVideoUDP extends Thread {
                     drawImg= new ImageIcon(bi);
                     videoServidor.setIcon(drawImg);
                 }
-
-
-
             } catch (Exception e) {
                 System.out.println("Problema al recibir la imagen");
                 e.printStackTrace();

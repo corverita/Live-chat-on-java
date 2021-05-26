@@ -175,6 +175,8 @@ public class WebcamGUI extends javax.swing.JFrame {
     }
 
     private void jBtnDesactivarCamaraActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
-        clienteEnviaVideoUDP.detener();
+        if(clienteEnviaVideoUDP!=null) {
+            clienteEnviaVideoUDP.detener();
+        }
     }
 }

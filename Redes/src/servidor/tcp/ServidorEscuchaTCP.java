@@ -50,8 +50,6 @@ public class ServidorEscuchaTCP extends Thread {
                 bos.close();
                 System.out.println("Terminado de recibir: "+in);
                 System.out.println("Terminé de recibir");
-                socket.close();
-                socket = new ServerSocket(PUERTO_SERVER);
             }
         }catch(Exception e){
             e.printStackTrace();

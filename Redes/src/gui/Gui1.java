@@ -27,14 +27,10 @@ public class Gui1 extends javax.swing.JFrame {
     FileReader lecturaArchivo;
 	ClienteEnviaUDP clienteEnviaUDP;
 	ClienteEnviaTCP clienteEnviaTCP;
-	ClienteEnviaVideoUDP clienteEnviaVideoUDP;
 	ServidorEscuchaUDP servidorEscuchaUDP;
 	ServidorEscuchaTCP servidorEscuchaTCP;
-	ServidorEscuchaVideoUDP servidorEscuchaVideoUDP;
 	JTextArea textAreaRecibidos;
 	JTextArea textAreaEnviados;
-	JLabel servidorWebcam;
-	JLabel usuarioWebcam;
 	String ipServer;
 	WebcamGUI webcamGUI;
 	int puertoServidorArchivos;
@@ -47,12 +43,8 @@ public class Gui1 extends javax.swing.JFrame {
         this.ipServer=ipServer;
         labelRuta.setText("No hay un archivo seleccionados");
 
-        webcamGUI=new WebcamGUI();
+        webcamGUI=new WebcamGUI(ipServer,puertoServerVideo,puertoClienteVideo);
 		clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServerMensajes);
-
-		clienteEnviaVideoUDP= new ClienteEnviaVideoUDP(ipServer,puertoServerVideo,webcamGUI.jLabelWebcamUsuario);
-		servidorEscuchaVideoUDP=new ServidorEscuchaVideoUDP(puertoClienteVideo, webcamGUI.jLabelWebcamServidor);
-		servidorEscuchaVideoUDP.start();
 
 		servidorEscuchaUDP =new ServidorEscuchaUDP(puertoClienteMensajes,textAreaRecibidos,textAreaEnviados);
 
@@ -254,7 +246,6 @@ public class Gui1 extends javax.swing.JFrame {
 
     private void btnActivarCamaraActionPerformed(java.awt.event.ActionEvent evt) {
         webcamGUI.setVisible(true);
-        clienteEnviaVideoUDP.start();
     }
 
     private void btnSeleccionarArchivoActionPerformed(java.awt.event.ActionEvent evt) {

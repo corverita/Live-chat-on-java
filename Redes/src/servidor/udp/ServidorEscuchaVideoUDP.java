@@ -40,17 +40,22 @@ public class ServidorEscuchaVideoUDP extends Thread {
 
                 paquete = new DatagramPacket(bytes,64000);
                 socket.receive(paquete);
+                String mensaje = new String(paquete.getData(),0,paquete.getLength()).trim();
+                if(mensaje.equalsIgnoreCase("-1")){
+                    videoServidor.setIcon(null);
+                }else{
+                    byte[] descomprimir=decompress(paquete.getData());
+                    descomprimir=decompress(descomprimir);
+                    descomprimir=decompress(descomprimir);
 
-                byte[] descomprimir=decompress(paquete.getData());
-                descomprimir=decompress(descomprimir);
+                    InputStream is=new ByteArrayInputStream(descomprimir);
+                    BufferedImage bi=ImageIO.read(is);
+                    drawImg= new ImageIcon(bi);
+                    videoServidor.setIcon(drawImg);
+                }
 
-                InputStream is=new ByteArrayInputStream(descomprimir);
-                System.out.println(descomprimir.length);
-                BufferedImage bi=ImageIO.read(is);
-                System.out.println(bi.getHeight()+ " "+bi.getWidth());
-                drawImg= new ImageIcon(bi);
-                System.out.println(drawImg);
-                videoServidor.setIcon(drawImg);
+
+
             } catch (Exception e) {
                 System.out.println("Problema al recibir la imagen");
                 e.printStackTrace();

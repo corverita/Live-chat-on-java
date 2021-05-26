@@ -25,14 +25,16 @@ public class ClienteEnviaVideoUDP extends Thread{
 	private BufferedImage bufferedImg;
 	private ImageIcon drawImg;
 	private JLabel videoUsuario;
+	private boolean activo;
 	protected final String SERVER;
 
-	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws SocketException, UnknownHostException {
-		socket = new DatagramSocket();
+	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws UnknownHostException, SocketException {
+		socket=new DatagramSocket();
 		SERVER=servidor;
 		PUERTO_SERVER=puertoServidor;
 		address=InetAddress.getByName(SERVER);
 		videoUsuario=webcamUsuario;
+		activo=true;
 	}
 
 	public void run(){
@@ -44,7 +46,7 @@ public class ClienteEnviaVideoUDP extends Thread{
 			System.out.println("Problema al momento de abrir la camara");
 			e.printStackTrace();
 		}
-		while(true){
+		while(activo){
 			try{
 				bufferedImg = webcam.getImage();
 				drawImg= new ImageIcon(bufferedImg);
@@ -53,6 +55,9 @@ public class ClienteEnviaVideoUDP extends Thread{
 
 				byte[] comprimido=compress(bytes);
 				comprimido=compress(comprimido);
+				comprimido=compress(comprimido);
+
+				System.out.println(comprimido.length);
 
 				paquete = new DatagramPacket(comprimido,comprimido.length,address,PUERTO_SERVER);
 				socket.send(paquete);
@@ -62,6 +67,17 @@ public class ClienteEnviaVideoUDP extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void detener() throws IOException {
+		activo=false;
+		webcam.close();
+		String valorSalida="-1";
+		byte[] bytes=valorSalida.getBytes(StandardCharsets.UTF_8);
+		DatagramPacket paqueteSalida=new DatagramPacket(bytes, bytes.length,address,PUERTO_SERVER);
+		socket.send(paqueteSalida);
+		videoUsuario.setIcon(null);
+		stop();
 	}
 
 	public static byte[] compress(byte[] in) {

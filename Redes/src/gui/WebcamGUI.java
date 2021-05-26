@@ -5,19 +5,41 @@
  */
 package gui;
 
+import cliente.udp.ClienteEnviaVideoUDP;
+import com.github.sarxos.webcam.Webcam;
+import servidor.udp.ServidorEscuchaVideoUDP;
+
 import javax.swing.*;
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 /**
  *
  * @author oscar
  */
 public class WebcamGUI extends javax.swing.JFrame {
+    private javax.swing.JButton jBtnActivarCamara;
+    private javax.swing.JButton jBtnDesactivarCamara;
+    private javax.swing.JLabel jLabelUsuario;
+    private javax.swing.JLabel jLabelWServidor;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private ClienteEnviaVideoUDP clienteEnviaVideoUDP;
+    private ServidorEscuchaVideoUDP servidorEscuchaVideoUDP;
+    private String ipServer;
+    private int puertoServerVideo;
 
     /**
      * Creates new form WebcamGUI
      */
-    public WebcamGUI() {
+    public WebcamGUI(String ipServer, int puertoServerVideo, int puertoClienteVideo) throws SocketException, UnknownHostException {
         initComponents();
+        this.ipServer=ipServer;
+        this.puertoServerVideo=puertoServerVideo;
+        servidorEscuchaVideoUDP=new ServidorEscuchaVideoUDP(puertoClienteVideo, jLabelWServidor);
+        servidorEscuchaVideoUDP.start();
     }
 
     /**
@@ -31,36 +53,38 @@ public class WebcamGUI extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jLabelWebcamUsuario = new javax.swing.JLabel();
+        jLabelUsuario = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jLabelWebcamServidor = new javax.swing.JLabel();
+        jLabelWServidor = new javax.swing.JLabel();
+        jBtnActivarCamara = new javax.swing.JButton();
+        jBtnDesactivarCamara = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
-//        jLabelWebcamUsuario.setText("Webcam Usuario");
+//        jLabelUsuario.setText("Webcam Usuario");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabelWebcamUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                        .addComponent(jLabelUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabelWebcamUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                        .addComponent(jLabelUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
         );
 
-//        jLabelWebcamServidor.setText("Webcam Servidor");
+//        jLabelWServidor.setText("Webcam Servidor");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabelWebcamServidor, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                        .addComponent(jLabelWServidor, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabelWebcamServidor, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                        .addComponent(jLabelWServidor, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -89,31 +113,68 @@ public class WebcamGUI extends javax.swing.JFrame {
                                         .addContainerGap()))
         );
 
+        jBtnActivarCamara.setText("Activar Camara");
+        jBtnActivarCamara.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    jBtnActivarCamaraActionPerformed(evt);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        jBtnDesactivarCamara.setText("Desactivar Camara");
+        jBtnDesactivarCamara.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    jBtnDesactivarCamaraActionPerformed(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(197, 197, 197)
+                                                .addComponent(jBtnActivarCamara)
+                                                .addGap(118, 118, 118)
+                                                .addComponent(jBtnDesactivarCamara)))
                                 .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jBtnActivarCamara)
+                                        .addComponent(jBtnDesactivarCamara))
+                                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>
 
-    // Variables declaration - do not modify
-    public javax.swing.JLabel jLabelWebcamUsuario;
-    public javax.swing.JLabel jLabelWebcamServidor;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    // End of variables declaration
+    private void jBtnActivarCamaraActionPerformed(java.awt.event.ActionEvent evt) throws SocketException, UnknownHostException {
+        clienteEnviaVideoUDP= new ClienteEnviaVideoUDP(ipServer,puertoServerVideo,jLabelUsuario);
+        clienteEnviaVideoUDP.start();
+
+    }
+
+    private void jBtnDesactivarCamaraActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
+        clienteEnviaVideoUDP.detener();
+    }
 }

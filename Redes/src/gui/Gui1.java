@@ -33,17 +33,21 @@ public class Gui1 extends javax.swing.JFrame {
 	ServidorEscuchaVideoUDP servidorEscuchaVideoUDP;
 	JTextArea textAreaRecibidos;
 	JTextArea textAreaEnviados;
+	String ipServer;
+	int puertoServidorArchivos;
     
     /**
      * Creates new form Gui
      */
-    public Gui1(DatagramSocket socketEscucha, String ipServer, int puertoServerMensajes, int puertoClienteMensajes, int puertoServerVideo, int puertoClienteVideo) throws Exception {
+    public Gui1(DatagramSocket socketEscucha, String ipServer, int puertoServerMensajes, int puertoClienteMensajes, int puertoServerVideo, int puertoClienteVideo, int puertoServerArchivos) throws Exception {
         initComponents();
+        this.ipServer=ipServer;
         labelRuta.setText("No hay un archivo seleccionados");
 		clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServerMensajes);
 		clienteEnviaVideoUDP= new ClienteEnviaVideoUDP(ipServer,puertoServerVideo);
 		servidorEscuchaVideoUDP=new ServidorEscuchaVideoUDP(puertoClienteVideo);
 		servidorEscuchaUDP =new ServidorEscuchaUDP(puertoClienteMensajes,textAreaRecibidos,textAreaEnviados);
+		puertoServidorArchivos=puertoServerArchivos;
 		servidorEscuchaUDP.start();
     }
 
@@ -51,14 +55,6 @@ public class Gui1 extends javax.swing.JFrame {
         try {
             servidorEscuchaTCP=new ServidorEscuchaTCP(puertoClienteArchivos);
             servidorEscuchaTCP.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void iniciaClienteTCP(String ipServer, int puertoServerArchivos){
-        try {
-            clienteEnviaTCP=new ClienteEnviaTCP(ipServer,puertoServerArchivos);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,7 +138,11 @@ public class Gui1 extends javax.swing.JFrame {
         btnEnviarArchivo.setText("Enviar Archivo");
         btnEnviarArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEnviarArchivoActionPerformed(evt);
+                try {
+                    btnEnviarArchivoActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -267,7 +267,10 @@ public class Gui1 extends javax.swing.JFrame {
         }
     }
 
-    private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
+        if(clienteEnviaTCP==null){
+            clienteEnviaTCP=new ClienteEnviaTCP(ipServer,puertoServidorArchivos);
+        }
         if(file!=null){
             clienteEnviaTCP.enviarArchivo(file);
             //Proceder a enviarlo

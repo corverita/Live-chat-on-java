@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.InflaterOutputStream;
 
 import static com.github.sarxos.webcam.util.ImageUtils.toByteArray;
 
@@ -33,55 +34,75 @@ public class ServidorEscuchaVideoUDP extends Thread {
     public void run() {
 
 
-                try {
-                    webcam = Webcam.getDefault();
-                    webcam.setViewSize(new Dimension(640, 480));
-                    webcam.open();
-                    frame = new JFrame("[WEBCAM SERVER] - Host:" + InetAddress.getLocalHost().getHostAddress() + " - Port:");
-                    frame.setSize(640, 480);
-                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        try {
+            webcam = Webcam.getDefault();
+            webcam.setViewSize(new Dimension(176,144));
+            webcam.open();
+            frame = new JFrame("[WEBCAM SERVER] - Host:" + InetAddress.getLocalHost().getHostAddress() + " - Port:");
+            frame.setSize(176,144);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-                    label = new JLabel();
-                    label.setSize(640, 480);
-                    label.setVisible(true);
+            label = new JLabel();
+            label.setSize(176,144);
+            label.setVisible(true);
 
-                    frame.add(label);
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    System.out.println("Problema al momento de abrir la camara");
-                    e.printStackTrace();
-                }
-                while (true) {
-                    try {
-                        byte[] bytes = new byte[MAX_BUFFER];
-
-                        paquete = new DatagramPacket(bytes, MAX_BUFFER);
-                        socket.receive(paquete);
-
-                        String paqueteRecibido=new String(paquete.getData(),0,paquete.getLength()).trim();
-                        byte[] bytesDecode= Base64.decode(paqueteRecibido);
-
-                        BufferedImage bi=toBufferedImage(bytesDecode);
-                        drawImg= new ImageIcon(bi);
-                        label.setIcon(drawImg);
-                    } catch (Exception e) {
-                        System.out.println("Problema al recibir la imagen");
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            public BufferedImage toBufferedImage ( byte[] bytes) throws IOException {
-
-                InputStream is = new ByteArrayInputStream(bytes);
-                BufferedImage bi = null;
-                try {
-                    bi = ImageIO.read(is);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return bi;
-
-            }
-
+            frame.add(label);
+            frame.setVisible(true);
+        } catch (Exception e) {
+            System.out.println("Problema al momento de abrir la camara");
+            e.printStackTrace();
         }
+        while (true) {
+            try {
+                byte[] bytes = new byte[64000];
+
+                paquete = new DatagramPacket(bytes,64000);
+                socket.receive(paquete);
+
+                byte[] descomprimir=decompress(paquete.getData());
+                descomprimir=decompress(descomprimir);
+
+                InputStream is=new ByteArrayInputStream(descomprimir);
+                System.out.println(descomprimir.length);
+                BufferedImage bi=ImageIO.read(is);
+                System.out.println(bi.getHeight()+ " "+bi.getWidth());
+                drawImg= new ImageIcon(bi);
+                System.out.println(drawImg);
+                label.setIcon(drawImg);
+            } catch (Exception e) {
+                System.out.println("Problema al recibir la imagen");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static byte[] decompress(byte[] in) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            InflaterOutputStream infl = new InflaterOutputStream(out);
+            infl.write(in);
+            infl.flush();
+            infl.close();
+
+            return out.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(150);
+            return null;
+        }
+    }
+
+    public BufferedImage toBufferedImage ( byte[] bytes) throws IOException {
+
+        InputStream is = new ByteArrayInputStream(bytes);
+        BufferedImage bi = null;
+        try {
+            bi = ImageIO.read(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bi;
+
+    }
+
+}

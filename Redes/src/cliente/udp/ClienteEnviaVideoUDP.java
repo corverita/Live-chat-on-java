@@ -10,32 +10,33 @@ import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.DeflaterOutputStream;
 
 //declaramos la clase udp envia
 public class ClienteEnviaVideoUDP extends Thread{
-    protected BufferedReader in;
-    //Definimos el sockets, número de bytes del buffer, y mensaje.
-    protected final int MAX_BUFFER=256;
-    protected final int PUERTO_SERVER;
-    protected DatagramSocket socket;
-    protected InetAddress address;
-    protected DatagramPacket paquete;
+	protected BufferedReader in;
+	//Definimos el sockets, número de bytes del buffer, y mensaje.
+	protected final int MAX_BUFFER=256;
+	protected final int PUERTO_SERVER;
+	protected DatagramSocket socket;
+	protected InetAddress address;
+	protected DatagramPacket paquete;
 	private Webcam webcam;
 	private BufferedImage bufferedImg;
 	private ImageIcon drawImg;
-    protected final String SERVER;
-    
-    public ClienteEnviaVideoUDP(String servidor, int puertoServidor) throws SocketException, UnknownHostException {
-        socket = new DatagramSocket();
-        SERVER=servidor;
-        PUERTO_SERVER=puertoServidor;
+	protected final String SERVER;
+
+	public ClienteEnviaVideoUDP(String servidor, int puertoServidor) throws SocketException, UnknownHostException {
+		socket = new DatagramSocket();
+		SERVER=servidor;
+		PUERTO_SERVER=puertoServidor;
 		address=InetAddress.getByName(SERVER);
-    }
+	}
 
 	public void run(){
 		try{
 			webcam=Webcam.getDefault();
-			webcam.setViewSize(new Dimension(640,480));
+			webcam.setViewSize(new Dimension(176,144));
 			webcam.open();
 		}catch(Exception e){
 			System.out.println("Problema al momento de abrir la camara");
@@ -46,26 +47,45 @@ public class ClienteEnviaVideoUDP extends Thread{
 				bufferedImg = webcam.getImage();
 				drawImg= new ImageIcon(bufferedImg);
 				byte[] bytes=toByteArray(bufferedImg,"png");
-				String bytesBase64 = Base64.encode(bytes);
 
-				paquete = new DatagramPacket(bytesBase64.getBytes(StandardCharsets.UTF_8),bytesBase64.length(),address,PUERTO_SERVER);
+				byte[] comprimido=compress(bytes);
+				comprimido=compress(comprimido);
+
+				System.out.println(comprimido.length);
+				paquete = new DatagramPacket(comprimido,comprimido.length,address,PUERTO_SERVER);
 				socket.send(paquete);
-				
+
 			}catch(Exception e){
 				System.out.println("Problema al enviar la imagen");
 				e.printStackTrace();
 			}
 		}
 	}
-    
+
+	public static byte[] compress(byte[] in) {
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			DeflaterOutputStream defl = new DeflaterOutputStream(out);
+			defl.write(in);
+			defl.flush();
+			defl.close();
+
+			return out.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(150);
+			return null;
+		}
+	}
+
 	public byte[] toByteArray(BufferedImage bi, String format)
-        throws IOException {
+			throws IOException {
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(bi, format, baos);
-        byte[] bytes = baos.toByteArray();
-        return bytes;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bi, format, baos);
+		byte[] bytes = baos.toByteArray();
+		return bytes;
 
-    }
-    
+	}
+
 }

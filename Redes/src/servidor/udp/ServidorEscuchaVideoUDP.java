@@ -26,32 +26,14 @@ public class ServidorEscuchaVideoUDP extends Thread {
     private ImageIcon drawImg;
     private JFrame frame;
     private JLabel label;
+    private JLabel videoServidor;
 
-    public ServidorEscuchaVideoUDP(int puertoServidor) throws SocketException, UnknownHostException {
+    public ServidorEscuchaVideoUDP(int puertoServidor, JLabel webcamServidor) throws SocketException, UnknownHostException {
         socket = new DatagramSocket(puertoServidor);
+        videoServidor=webcamServidor;
     }
 
     public void run() {
-
-
-        try {
-            webcam = Webcam.getDefault();
-            webcam.setViewSize(new Dimension(176,144));
-            webcam.open();
-            frame = new JFrame("[WEBCAM SERVER] - Host:" + InetAddress.getLocalHost().getHostAddress() + " - Port:");
-            frame.setSize(176,144);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            label = new JLabel();
-            label.setSize(176,144);
-            label.setVisible(true);
-
-            frame.add(label);
-            frame.setVisible(true);
-        } catch (Exception e) {
-            System.out.println("Problema al momento de abrir la camara");
-            e.printStackTrace();
-        }
         while (true) {
             try {
                 byte[] bytes = new byte[64000];
@@ -68,7 +50,7 @@ public class ServidorEscuchaVideoUDP extends Thread {
                 System.out.println(bi.getHeight()+ " "+bi.getWidth());
                 drawImg= new ImageIcon(bi);
                 System.out.println(drawImg);
-                label.setIcon(drawImg);
+                videoServidor.setIcon(drawImg);
             } catch (Exception e) {
                 System.out.println("Problema al recibir la imagen");
                 e.printStackTrace();

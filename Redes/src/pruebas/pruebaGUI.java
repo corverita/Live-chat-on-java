@@ -1,6 +1,7 @@
 package pruebas;
 
 import gui.Gui1;
+import gui.Gui2;
 
 import java.net.DatagramSocket;
 
@@ -16,7 +17,7 @@ public class pruebaGUI {
             gui.setTitle("Cliente 1");
             gui.setVisible(true);
 
-            Gui1 gui2=new Gui1(socket2,"192.168.100.8",50001,50002,50005,50006,50003);
+            Gui2 gui2=new Gui2(socket2,"192.168.100.8",50001,50002,50005,50006,50003);
             gui2.iniciaServidorTCP(50004);
             gui2.setTitle("Cliente 2");
             gui2.setVisible(true);

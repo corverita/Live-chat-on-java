@@ -33,7 +33,10 @@ public class Gui1 extends javax.swing.JFrame {
 	ServidorEscuchaVideoUDP servidorEscuchaVideoUDP;
 	JTextArea textAreaRecibidos;
 	JTextArea textAreaEnviados;
+	JLabel servidorWebcam;
+	JLabel usuarioWebcam;
 	String ipServer;
+	WebcamGUI webcamGUI;
 	int puertoServidorArchivos;
     
     /**
@@ -43,10 +46,16 @@ public class Gui1 extends javax.swing.JFrame {
         initComponents();
         this.ipServer=ipServer;
         labelRuta.setText("No hay un archivo seleccionados");
+
+        webcamGUI=new WebcamGUI();
 		clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServerMensajes);
-		clienteEnviaVideoUDP= new ClienteEnviaVideoUDP(ipServer,puertoServerVideo);
-		servidorEscuchaVideoUDP=new ServidorEscuchaVideoUDP(puertoClienteVideo);
+
+		clienteEnviaVideoUDP= new ClienteEnviaVideoUDP(ipServer,puertoServerVideo,webcamGUI.jLabelWebcamUsuario);
+		servidorEscuchaVideoUDP=new ServidorEscuchaVideoUDP(puertoClienteVideo, webcamGUI.jLabelWebcamServidor);
+		servidorEscuchaVideoUDP.start();
+
 		servidorEscuchaUDP =new ServidorEscuchaUDP(puertoClienteMensajes,textAreaRecibidos,textAreaEnviados);
+
 		puertoServidorArchivos=puertoServerArchivos;
 		servidorEscuchaUDP.start();
     }
@@ -244,7 +253,7 @@ public class Gui1 extends javax.swing.JFrame {
     }
 
     private void btnActivarCamaraActionPerformed(java.awt.event.ActionEvent evt) {
-        servidorEscuchaVideoUDP.start();
+        webcamGUI.setVisible(true);
         clienteEnviaVideoUDP.start();
     }
 

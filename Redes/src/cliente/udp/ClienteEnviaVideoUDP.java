@@ -24,13 +24,15 @@ public class ClienteEnviaVideoUDP extends Thread{
 	private Webcam webcam;
 	private BufferedImage bufferedImg;
 	private ImageIcon drawImg;
+	private JLabel videoUsuario;
 	protected final String SERVER;
 
-	public ClienteEnviaVideoUDP(String servidor, int puertoServidor) throws SocketException, UnknownHostException {
+	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws SocketException, UnknownHostException {
 		socket = new DatagramSocket();
 		SERVER=servidor;
 		PUERTO_SERVER=puertoServidor;
 		address=InetAddress.getByName(SERVER);
+		videoUsuario=webcamUsuario;
 	}
 
 	public void run(){
@@ -46,12 +48,12 @@ public class ClienteEnviaVideoUDP extends Thread{
 			try{
 				bufferedImg = webcam.getImage();
 				drawImg= new ImageIcon(bufferedImg);
+				videoUsuario.setIcon(drawImg);
 				byte[] bytes=toByteArray(bufferedImg,"png");
 
 				byte[] comprimido=compress(bytes);
 				comprimido=compress(comprimido);
 
-				System.out.println(comprimido.length);
 				paquete = new DatagramPacket(comprimido,comprimido.length,address,PUERTO_SERVER);
 				socket.send(paquete);
 

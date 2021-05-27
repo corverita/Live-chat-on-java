@@ -41,7 +41,7 @@ public class ClienteEnviaVideoUDP extends Thread{
 		try{
 			socket=new DatagramSocket();
 			webcam=Webcam.getDefault();
-			webcam.setViewSize(new Dimension(176,144));
+			webcam.setViewSize(new Dimension(320,240));
 			webcam.open();
 		}catch(Exception e){
 			System.out.println("Problema al momento de abrir la camara");
@@ -52,13 +52,12 @@ public class ClienteEnviaVideoUDP extends Thread{
 				bufferedImg = webcam.getImage();
 				drawImg= new ImageIcon(bufferedImg);
 				videoUsuario.setIcon(drawImg);
-				byte[] bytes=toByteArray(bufferedImg,"png");
 
-				byte[] comprimido=compress(bytes);
-				comprimido=compress(comprimido);
-				comprimido=compress(comprimido);
+				ByteArrayOutputStream baos=new ByteArrayOutputStream();
+				ImageIO.write(bufferedImg,"jpg",baos);
+				byte[] imageByte=baos.toByteArray();
 
-				paquete = new DatagramPacket(comprimido,comprimido.length,address,PUERTO_SERVER);
+				paquete = new DatagramPacket(imageByte,imageByte.length,address,PUERTO_SERVER);
 				socket.send(paquete);
 
 			}catch(Exception e){
@@ -81,30 +80,4 @@ public class ClienteEnviaVideoUDP extends Thread{
 			stop();
 		}
 	}
-
-	public static byte[] compress(byte[] in) {
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			DeflaterOutputStream defl = new DeflaterOutputStream(out);
-			defl.write(in);
-			defl.flush();
-			defl.close();
-			return out.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(150);
-			return null;
-		}
-	}
-
-	public byte[] toByteArray(BufferedImage bi, String format)
-			throws IOException {
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(bi, format, baos);
-		byte[] bytes = baos.toByteArray();
-		return bytes;
-
-	}
-
 }

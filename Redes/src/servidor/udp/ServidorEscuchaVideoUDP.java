@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterOutputStream;
 
 import static com.github.sarxos.webcam.util.ImageUtils.toByteArray;
@@ -39,13 +38,10 @@ public class ServidorEscuchaVideoUDP extends Thread {
                 if(mensaje.equalsIgnoreCase("-1")){
                     videoServidor.setIcon(null);
                 }else{
-                    byte[] descomprimir=decompress(paquete.getData());
-                    descomprimir=decompress(descomprimir);
-                    descomprimir=decompress(descomprimir);
-
-                    InputStream is=new ByteArrayInputStream(descomprimir);
-                    BufferedImage bi=ImageIO.read(is);
-                    drawImg= new ImageIcon(bi);
+                    byte[] paqueteBytes=paquete.getData();
+                    ByteArrayInputStream bain=new ByteArrayInputStream(paqueteBytes);
+                    BufferedImage bIma=ImageIO.read(bain);
+                    drawImg= new ImageIcon(bIma);
                     videoServidor.setIcon(drawImg);
                 }
             } catch (Exception e) {
@@ -54,34 +50,4 @@ public class ServidorEscuchaVideoUDP extends Thread {
             }
         }
     }
-
-    public static byte[] decompress(byte[] in) {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            InflaterOutputStream infl = new InflaterOutputStream(out);
-            infl.write(in);
-            infl.flush();
-            infl.close();
-
-            return out.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(150);
-            return null;
-        }
-    }
-
-    public BufferedImage toBufferedImage ( byte[] bytes) throws IOException {
-
-        InputStream is = new ByteArrayInputStream(bytes);
-        BufferedImage bi = null;
-        try {
-            bi = ImageIO.read(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bi;
-
-    }
-
 }

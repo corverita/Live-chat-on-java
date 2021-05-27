@@ -22,7 +22,9 @@ import java.net.UnknownHostException;
  */
 public class WebcamGUI extends javax.swing.JFrame {
     private javax.swing.JButton jBtnActivarCamara;
+    private javax.swing.JButton jBtnActivarMicrofono;
     private javax.swing.JButton jBtnDesactivarCamara;
+    private javax.swing.JButton jBtnDesactivarMicrofono;
     private javax.swing.JLabel jLabelUsuario;
     private javax.swing.JLabel jLabelWServidor;
     private javax.swing.JPanel jPanel1;
@@ -34,6 +36,7 @@ public class WebcamGUI extends javax.swing.JFrame {
     private ServidorEscuchaAudioUDP servidorEscuchaAudioUDP;
     private String ipServer;
     private int puertoServerVideo;
+    private int puertoServerAudio;
 
     /**
      * Creates new form WebcamGUI
@@ -42,7 +45,7 @@ public class WebcamGUI extends javax.swing.JFrame {
         initComponents();
         this.ipServer=ipServer;
         this.puertoServerVideo=puertoServerVideo;
-        clienteEnviaAudioUDP=new ClienteEnviaAudioUDP(ipServer,puertoServerAudio);
+        this.puertoServerAudio=puertoServerAudio;
 
         servidorEscuchaAudioUDP=new ServidorEscuchaAudioUDP(puertoClienteAudio);
         servidorEscuchaAudioUDP.start();
@@ -66,10 +69,10 @@ public class WebcamGUI extends javax.swing.JFrame {
         jLabelWServidor = new javax.swing.JLabel();
         jBtnActivarCamara = new javax.swing.JButton();
         jBtnDesactivarCamara = new javax.swing.JButton();
+        jBtnActivarMicrofono = new javax.swing.JButton();
+        jBtnDesactivarMicrofono = new javax.swing.JButton();
 
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-
-//        jLabelUsuario.setText("Webcam Usuario");
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -81,8 +84,6 @@ public class WebcamGUI extends javax.swing.JFrame {
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabelUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
         );
-
-//        jLabelWServidor.setText("Webcam Servidor");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -121,7 +122,7 @@ public class WebcamGUI extends javax.swing.JFrame {
                                         .addContainerGap()))
         );
 
-        jBtnActivarCamara.setText("Activar Camara");
+        jBtnActivarCamara.setLabel("Activar Camara");
         jBtnActivarCamara.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
@@ -145,20 +146,45 @@ public class WebcamGUI extends javax.swing.JFrame {
             }
         });
 
+        jBtnActivarMicrofono.setText("Activar Microfono");
+        jBtnActivarMicrofono.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    jBtnActivarMicrofonoActionPerformed(evt);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        jBtnDesactivarMicrofono.setText("Desactivar Microfono");
+        jBtnDesactivarMicrofono.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnDesactivarMicrofonoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addContainerGap()
                                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(layout.createSequentialGroup()
-                                                .addGap(197, 197, 197)
+                                                .addGap(54, 54, 54)
+                                                .addComponent(jBtnActivarMicrofono)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jBtnDesactivarMicrofono)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(jBtnActivarCamara)
-                                                .addGap(118, 118, 118)
-                                                .addComponent(jBtnDesactivarCamara)))
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jBtnDesactivarCamara)
+                                                .addGap(15, 15, 15)))
                                 .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -169,12 +195,14 @@ public class WebcamGUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jBtnActivarCamara)
-                                        .addComponent(jBtnDesactivarCamara))
+                                        .addComponent(jBtnDesactivarCamara)
+                                        .addComponent(jBtnActivarMicrofono)
+                                        .addComponent(jBtnDesactivarMicrofono))
                                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
-    }// </editor-fold>
+    }
 
     private void jBtnActivarCamaraActionPerformed(java.awt.event.ActionEvent evt) throws SocketException, UnknownHostException {
         clienteEnviaVideoUDP= new ClienteEnviaVideoUDP(ipServer,puertoServerVideo,jLabelUsuario);
@@ -183,9 +211,19 @@ public class WebcamGUI extends javax.swing.JFrame {
     }
 
     private void jBtnDesactivarCamaraActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
-        clienteEnviaAudioUDP.start();
         if(clienteEnviaVideoUDP!=null) {
             clienteEnviaVideoUDP.detener();
+        }
+    }
+
+    private void jBtnActivarMicrofonoActionPerformed(java.awt.event.ActionEvent evt) throws SocketException, UnknownHostException {
+        clienteEnviaAudioUDP=new ClienteEnviaAudioUDP(ipServer,puertoServerAudio);
+        clienteEnviaAudioUDP.start();
+    }
+
+    private void jBtnDesactivarMicrofonoActionPerformed(java.awt.event.ActionEvent evt) {
+        if(clienteEnviaAudioUDP!=null){
+            clienteEnviaAudioUDP.detener();
         }
     }
 }

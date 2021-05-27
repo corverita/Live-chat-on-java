@@ -39,8 +39,13 @@ public class ServidorEscuchaAudioUDP extends Thread{
             ByteArrayInputStream bais=new ByteArrayInputStream(datos);
             while(activo){
                 socket.receive(paquete);
-                ais=new AudioInputStream(bais,format,paquete.getLength());
-                toSpeaker(paquete.getData());
+                String mensaje = new String(paquete.getData(),0,paquete.getLength()).trim();
+                if(mensaje.equalsIgnoreCase("-1")){
+                    sourceDataLine.drain();
+                }else {
+                    ais=new AudioInputStream(bais,format,paquete.getLength());
+                    toSpeaker(paquete.getData());
+                }
             }
         }catch(Exception e){
             e.printStackTrace();

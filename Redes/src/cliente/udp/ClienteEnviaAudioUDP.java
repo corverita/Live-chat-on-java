@@ -54,4 +54,13 @@ public class ClienteEnviaAudioUDP extends Thread{
             }
         }
     }
+
+    public void detener(){
+        if(activo){
+            activo=false;
+            micro.close();
+            socket.close();
+            stop();
+        }
+    }
 }

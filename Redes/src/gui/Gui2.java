@@ -38,16 +38,13 @@ public class Gui2 extends javax.swing.JFrame {
     /**
      * Creates new form Gui
      */
-    public Gui2(DatagramSocket socketEscucha, String ipServer, int puertoServerMensajes, int puertoClienteMensajes, int puertoServerVideo, int puertoClienteVideo, int puertoServerArchivos) throws Exception {
+    public Gui2(DatagramSocket socketEscucha, String ipServer, int puertoServerMensajes, int puertoClienteMensajes, int puertoServerVideo, int puertoClienteVideo, int puertoServerArchivos, int puertoServerAudio, int puertoClienteAudio) throws Exception {
         initComponents();
         this.ipServer=ipServer;
         labelRuta.setText("No hay un archivo seleccionados");
-
-        webcamGUI=new WebcamGUI(ipServer,puertoServerVideo,puertoClienteVideo);
+        webcamGUI=new WebcamGUI(ipServer,puertoServerVideo,puertoClienteVideo,puertoServerAudio,puertoClienteAudio);
         clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServerMensajes);
-
         servidorEscuchaUDP =new ServidorEscuchaUDP(puertoClienteMensajes,textAreaRecibidos,textAreaEnviados);
-
         puertoServidorArchivos=puertoServerArchivos;
         servidorEscuchaUDP.start();
     }

@@ -5,8 +5,10 @@
  */
 package gui;
 
+import cliente.udp.ClienteEnviaAudioUDP;
 import cliente.udp.ClienteEnviaVideoUDP;
 import com.github.sarxos.webcam.Webcam;
+import servidor.udp.ServidorEscuchaAudioUDP;
 import servidor.udp.ServidorEscuchaVideoUDP;
 
 import javax.swing.*;
@@ -27,17 +29,23 @@ public class WebcamGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private ClienteEnviaVideoUDP clienteEnviaVideoUDP;
+    private ClienteEnviaAudioUDP clienteEnviaAudioUDP;
     private ServidorEscuchaVideoUDP servidorEscuchaVideoUDP;
+    private ServidorEscuchaAudioUDP servidorEscuchaAudioUDP;
     private String ipServer;
     private int puertoServerVideo;
 
     /**
      * Creates new form WebcamGUI
      */
-    public WebcamGUI(String ipServer, int puertoServerVideo, int puertoClienteVideo) throws SocketException, UnknownHostException {
+    public WebcamGUI(String ipServer, int puertoServerVideo, int puertoClienteVideo, int puertoServerAudio, int puertoClienteAudio) throws SocketException, UnknownHostException {
         initComponents();
         this.ipServer=ipServer;
         this.puertoServerVideo=puertoServerVideo;
+        clienteEnviaAudioUDP=new ClienteEnviaAudioUDP(ipServer,puertoServerAudio);
+
+        servidorEscuchaAudioUDP=new ServidorEscuchaAudioUDP(puertoClienteAudio);
+        servidorEscuchaAudioUDP.start();
         servidorEscuchaVideoUDP=new ServidorEscuchaVideoUDP(puertoClienteVideo, jLabelWServidor);
         servidorEscuchaVideoUDP.start();
     }
@@ -175,6 +183,7 @@ public class WebcamGUI extends javax.swing.JFrame {
     }
 
     private void jBtnDesactivarCamaraActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
+        clienteEnviaAudioUDP.start();
         if(clienteEnviaVideoUDP!=null) {
             clienteEnviaVideoUDP.detener();
         }

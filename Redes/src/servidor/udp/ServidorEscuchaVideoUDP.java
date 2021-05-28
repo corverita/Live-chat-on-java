@@ -1,22 +1,13 @@
 package servidor.udp;
 
-import com.github.sarxos.webcam.Webcam;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.InflaterOutputStream;
-
-import static com.github.sarxos.webcam.util.ImageUtils.toByteArray;
 
 //declaramos la clase udp envia
 public class ServidorEscuchaVideoUDP extends Thread {
-    //Definimos el sockets, número de bytes del buffer, y mensaje.
     protected DatagramSocket socket;
     protected DatagramPacket paquete;
     private ImageIcon drawImg;

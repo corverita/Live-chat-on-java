@@ -1,31 +1,27 @@
 package servidor.tcp;
 
+import javax.swing.*;
 import java.net.*;
-//importar la libreria java.net
  
 import java.io.*;
-//importar la libreria java.io
-// declaramos la clase servidortcp
  
 public class ServidorEscuchaTCP extends Thread {
-    // declaramos un objeto ServerSocket para realizar la comunicación
     protected ServerSocket socket;
     protected Socket socket_cli;
-    protected DataOutputStream output;
     protected DataInputStream dis;
-    protected BufferedInputStream bis;
     protected BufferedOutputStream bos;
     protected byte[] datos;
     protected int in;
     protected final int PUERTO_SERVER;
+    protected JTextArea areaMensajesRecibidos;
+    protected JTextArea areaMensajesEnviados;
 
     
-    public ServidorEscuchaTCP(int puertoS)throws Exception{
+    public ServidorEscuchaTCP(int puertoS, JTextArea areaMensajesRecibidos, JTextArea areaMensajesEnviados)throws Exception{
         PUERTO_SERVER=puertoS;
-        // Instanciamos un ServerSocket con la dirección del destino y el
-        // puerto que vamos a utilizar para la comunicación
-
         socket = new ServerSocket(PUERTO_SERVER);
+        this.areaMensajesRecibidos=areaMensajesRecibidos;
+        this.areaMensajesEnviados=areaMensajesEnviados;
     }
 
     public void run(){
@@ -37,10 +33,7 @@ public class ServidorEscuchaTCP extends Thread {
                 dis= new DataInputStream(socket_cli.getInputStream());
 
                 String nombreArchivo=dis.readUTF();
-                System.out.println(nombreArchivo);
-                nombreArchivo=nombreArchivo.substring(nombreArchivo.indexOf('\\')+1,nombreArchivo.length());
 
-                long tamano=dis.readLong();
                 datos=new byte[1024*8];
 
                 bos=new BufferedOutputStream(new FileOutputStream(nombreArchivo));
@@ -48,8 +41,8 @@ public class ServidorEscuchaTCP extends Thread {
                     bos.write(datos,0,in);
                 }
                 bos.close();
-                System.out.println("Terminado de recibir: "+in);
-                System.out.println("Terminé de recibir");
+                areaMensajesRecibidos.append("Recibí el archivo: "+ nombreArchivo+"\n");
+                areaMensajesEnviados.append("\n");
             }
         }catch(Exception e){
             e.printStackTrace();

@@ -3,35 +3,29 @@ import utilidad.Temporizador;
 
 import javax.swing.*;
 import java.net.*;
-// importar la libreria java.net
 import java.io.*;
-import java.util.Date;
 import java.util.Timer;
-// importar la libreria java.io
- 
-// declararamos la clase clientetcp
+
 public class ClienteEnviaTCP extends Thread{
-    // declaramos un objeto socket para realizar la comunicación
     protected Socket socket;
     protected final int PUERTO_SERVER;
     protected final String SERVER;
-    protected DataOutputStream out;
-    protected DataInputStream input;
     protected BufferedInputStream bis;
-    protected BufferedOutputStream bos;
     protected DataOutputStream dos;
     private byte[] bytes;
     private int in;
     private File archivo;
     private JLabel labelBandwidth;
     private JLabel labelTiempoRestante;
+    private JTextArea mensajesEnviados;
     
-    public ClienteEnviaTCP(String servidor, int puertoS, File archivo, JLabel labelBandwidth, JLabel labelTiempoRestante)throws Exception{
+    public ClienteEnviaTCP(String servidor, int puertoS, File archivo, JLabel labelBandwidth, JLabel labelTiempoRestante, JTextArea mensajesEnviados){
         PUERTO_SERVER=puertoS;
         SERVER=servidor;
         this.archivo=archivo;
         this.labelBandwidth=labelBandwidth;
         this.labelTiempoRestante=labelTiempoRestante;
+        this.mensajesEnviados=mensajesEnviados;
     }
 
     public void run(){
@@ -41,9 +35,6 @@ public class ClienteEnviaTCP extends Thread{
             dos = new DataOutputStream(socket.getOutputStream());
 
             dos.writeUTF(archivo.getName());
-            dos.flush();
-
-            dos.writeLong(archivo.length());
             dos.flush();
 
             int segundoAnterior=0;
@@ -73,12 +64,15 @@ public class ClienteEnviaTCP extends Thread{
                     labelTiempoRestante.setText(transmissionTime-segundoAnterior+"s");
                 }
             }
-            System.out.println("Enviado: "+archivo.getName());
-            bis.close();
-            dos.close();
-
             labelBandwidth.setText("Enviado");
             labelTiempoRestante.setText("Enviado");
+
+            String mensajesEnviadosString=mensajesEnviados.getText();
+            mensajesEnviadosString+="Enviado: "+archivo.getName()+"\n";
+            mensajesEnviados.setText(mensajesEnviadosString);
+
+            bis.close();
+            dos.close();
 
             socket.close();
             timer.cancel();

@@ -1,13 +1,8 @@
 package cliente.udp;
 
 import java.net.*;
-import java.io.*;
- 
-//declaramos la clase udp envia
+
 public class ClienteEnviaUDP{
-    protected BufferedReader in;
-    //Definimos el sockets, número de bytes del buffer, y mensaje.
-    protected final int MAX_BUFFER=256;
     protected final int PUERTO_SERVER;
     protected DatagramSocket socket;
     protected InetAddress address;
@@ -23,11 +18,8 @@ public class ClienteEnviaUDP{
     public void enviarMensaje(String mensaje){
         byte[] mensaje_bytes;
 
-        byte[] RecogerServidor_bytes;
-
         try {
             address=InetAddress.getByName(SERVER);
-            mensaje_bytes=new byte[mensaje.length()];
             mensaje_bytes = mensaje.getBytes();
             paquete = new DatagramPacket(mensaje_bytes,mensaje.length(),address,PUERTO_SERVER);
             socket.send(paquete);

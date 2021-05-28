@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import java.io.File;
@@ -16,7 +11,6 @@ import cliente.tcp.ClienteEnviaTCP;
 import cliente.udp.*;
 import servidor.tcp.ServidorEscuchaTCP;
 import servidor.udp.ServidorEscuchaUDP;
-import servidor.udp.ServidorEscuchaVideoUDP;
 
 /**
  *
@@ -51,7 +45,7 @@ public class Gui2 extends javax.swing.JFrame {
 
     public void iniciaServidorTCP(int puertoClienteArchivos){
         try {
-            servidorEscuchaTCP=new ServidorEscuchaTCP(puertoClienteArchivos);
+            servidorEscuchaTCP=new ServidorEscuchaTCP(puertoClienteArchivos,textAreaRecibidos, textAreaEnviados);
             servidorEscuchaTCP.start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,16 +118,17 @@ public class Gui2 extends javax.swing.JFrame {
         jScrollPane3.setViewportView(textAreaEnviados);
 
         jTextField1.setEditable(false);
-        jTextField1.setText("Mensajes del cliente");
+        jTextField1.setText("Mensajes enviados");
         jTextField1.setEnabled(false);
 
         jTextField2.setEditable(false);
-        jTextField2.setText("Mensajes del servidor");
+        jTextField2.setText("Mensajes recibidos");
         jTextField2.setEnabled(false);
 
         labelRuta.setText("Archivo seleccionado:");
 
         btnEnviarArchivo.setText("Enviar Archivo");
+        btnEnviarArchivo.setEnabled(false);
         btnEnviarArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
@@ -152,7 +147,7 @@ public class Gui2 extends javax.swing.JFrame {
 
         labelTiempoRestante.setText("NA");
 
-        jLabel1.setText("Activar Camara");
+        jLabel1.setText("Abrir menú de Cámara");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -237,7 +232,6 @@ public class Gui2 extends javax.swing.JFrame {
                                                                 .addComponent(labelVelActual)))))
                                 .addGap(0, 0, 0))
         );
-
         pack();
     }
 
@@ -251,6 +245,7 @@ public class Gui2 extends javax.swing.JFrame {
             file = fileChooser.getSelectedFile();
             if(file.exists()){
                 labelRuta.setText("Archivo seleccionado: "+file.getAbsolutePath());
+                btnEnviarArchivo.setEnabled(true);
             }else{
                 labelRuta.setText("Error al leer el archivo. No se encuentra o no se puede leer.");
             }
@@ -265,13 +260,20 @@ public class Gui2 extends javax.swing.JFrame {
     }
 
     private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
-
         if(file!=null){
-            clienteEnviaTCP=new ClienteEnviaTCP(ipServer,puertoServidorArchivos,file, labelVelActual,labelTiempoRestante);
+            String mensajesEnviados=textAreaEnviados.getText();
+            mensajesEnviados+="Enviando: "+file.getName()+"\n";
+            textAreaEnviados.setText(mensajesEnviados);
+            textAreaRecibidos.append("\n");
+
+            clienteEnviaTCP=new ClienteEnviaTCP(ipServer,puertoServidorArchivos,file, labelVelActual,labelTiempoRestante,textAreaEnviados);
             clienteEnviaTCP.start();
-            //Proceder a enviarlo
+
+            textAreaRecibidos.append("\n");
+
             file=null;
             labelRuta.setText("No hay un archivo seleccionados");
+            btnEnviarArchivo.setEnabled(false);
         }else{
             //No enviarlo, cancelarlo y dar un warning
             JOptionPane.showMessageDialog(null, "No hay archivo para enviar");

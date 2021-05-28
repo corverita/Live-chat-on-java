@@ -1,7 +1,6 @@
 package cliente.udp;
 
 import com.github.sarxos.webcam.Webcam;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,14 +9,8 @@ import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.GZIPOutputStream;
 
-//declaramos la clase udp envia
 public class ClienteEnviaVideoUDP extends Thread{
-	protected BufferedReader in;
-	//Definimos el sockets, número de bytes del buffer, y mensaje.
-	protected final int MAX_BUFFER=256;
 	protected final int PUERTO_SERVER;
 	protected DatagramSocket socket;
 	protected InetAddress address;
@@ -29,7 +22,7 @@ public class ClienteEnviaVideoUDP extends Thread{
 	private boolean activo;
 	protected final String SERVER;
 
-	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws UnknownHostException, SocketException {
+	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws UnknownHostException {
 		SERVER=servidor;
 		PUERTO_SERVER=puertoServidor;
 		address=InetAddress.getByName(SERVER);

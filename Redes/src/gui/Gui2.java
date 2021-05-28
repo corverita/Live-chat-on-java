@@ -265,11 +265,10 @@ public class Gui2 extends javax.swing.JFrame {
     }
 
     private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
-        if(clienteEnviaTCP==null){
-            clienteEnviaTCP=new ClienteEnviaTCP(ipServer,puertoServidorArchivos);
-        }
+
         if(file!=null){
-            clienteEnviaTCP.enviarArchivo(file);
+            clienteEnviaTCP=new ClienteEnviaTCP(ipServer,puertoServidorArchivos,file, labelVelActual,labelTiempoRestante);
+            clienteEnviaTCP.start();
             //Proceder a enviarlo
             file=null;
             labelRuta.setText("No hay un archivo seleccionados");

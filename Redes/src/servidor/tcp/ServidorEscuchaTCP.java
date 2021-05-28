@@ -41,7 +41,7 @@ public class ServidorEscuchaTCP extends Thread {
                 nombreArchivo=nombreArchivo.substring(nombreArchivo.indexOf('\\')+1,nombreArchivo.length());
 
                 long tamano=dis.readLong();
-                datos=new byte[Integer.parseInt(tamano+"")];
+                datos=new byte[1024*8];
 
                 bos=new BufferedOutputStream(new FileOutputStream(nombreArchivo));
                 while((in = is.read(datos)) != -1){

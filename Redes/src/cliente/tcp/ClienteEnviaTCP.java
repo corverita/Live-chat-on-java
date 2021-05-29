@@ -17,15 +17,19 @@ public class ClienteEnviaTCP extends Thread{
     private File archivo;
     private JLabel labelBandwidth;
     private JLabel labelTiempoRestante;
+    private JLabel labelLatencia;
+    private JLabel labelTTranscurrido;
     private JTextArea mensajesEnviados;
     
-    public ClienteEnviaTCP(String servidor, int puertoS, File archivo, JLabel labelBandwidth, JLabel labelTiempoRestante, JTextArea mensajesEnviados){
+    public ClienteEnviaTCP(String servidor, int puertoS, File archivo, JLabel labelBandwidth, JLabel labelTiempoRestante, JTextArea mensajesEnviados, JLabel labelLatencia, JLabel labelTTranscurrido){
         PUERTO_SERVER=puertoS;
         SERVER=servidor;
         this.archivo=archivo;
         this.labelBandwidth=labelBandwidth;
         this.labelTiempoRestante=labelTiempoRestante;
         this.mensajesEnviados=mensajesEnviados;
+        this.labelLatencia=labelLatencia;
+        this.labelTTranscurrido=labelTTranscurrido;
     }
 
     public void run(){
@@ -60,10 +64,14 @@ public class ClienteEnviaTCP extends Thread{
 
                     double transmissionTime=mBArchivo/bandwidth;
 
+                    labelLatencia.setText(transmissionTime+"s");
+                    labelTTranscurrido.setText(segundoAnterior+"s");
                     labelBandwidth.setText(bandwidth+"Mbps");
                     labelTiempoRestante.setText(transmissionTime-segundoAnterior+"s");
                 }
             }
+            labelLatencia.setText("Enviado");
+            labelTTranscurrido.setText("Enviado");
             labelBandwidth.setText("Enviado");
             labelTiempoRestante.setText("Enviado");
 

@@ -38,9 +38,9 @@ public class ServidorEscuchaUDP extends Thread{
 
                 // Lo mostramos por pantalla
                 String mensajesRecibidos=areaMensajes.getText();
-
                 mensajesRecibidos+=paquete.getAddress()+":"+paquete.getPort()+"dice: "+mensaje+"\n";
                 areaMensajes.setText(mensajesRecibidos);
+
                 String mensajesEnviados=areaMensajesEnviados.getText();
                 mensajesEnviados+="\n";
                 areaMensajesEnviados.setText(mensajesEnviados);

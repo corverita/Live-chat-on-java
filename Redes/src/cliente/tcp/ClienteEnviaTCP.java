@@ -21,7 +21,7 @@ public class ClienteEnviaTCP extends Thread{
     private JLabel labelTTranscurrido;
     private JTextArea mensajesEnviados;
     
-    public ClienteEnviaTCP(String servidor, int puertoS, File archivo, JLabel labelBandwidth, JLabel labelTiempoRestante, JTextArea mensajesEnviados, JLabel labelLatencia, JLabel labelTTranscurrido){
+    public ClienteEnviaTCP(String servidor, int puertoS, File archivo, JLabel labelBandwidth, JLabel labelTiempoRestante, JTextArea mensajesEnviados, JLabel labelLatencia, JLabel labelTTranscurrido) throws IOException {
         PUERTO_SERVER=puertoS;
         SERVER=servidor;
         this.archivo=archivo;
@@ -30,11 +30,11 @@ public class ClienteEnviaTCP extends Thread{
         this.mensajesEnviados=mensajesEnviados;
         this.labelLatencia=labelLatencia;
         this.labelTTranscurrido=labelTTranscurrido;
+        socket = new Socket(SERVER,PUERTO_SERVER);
     }
 
     public void run(){
         try{
-            socket = new Socket(SERVER,PUERTO_SERVER);
             bis= new BufferedInputStream(new FileInputStream(archivo));
             dos = new DataOutputStream(socket.getOutputStream());
 

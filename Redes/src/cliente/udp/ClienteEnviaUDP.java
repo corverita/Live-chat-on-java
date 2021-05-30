@@ -9,8 +9,8 @@ public class ClienteEnviaUDP{
     protected DatagramPacket paquete;
     protected final String SERVER;
     
-    public ClienteEnviaUDP(DatagramSocket nuevoSocket, String servidor, int puertoServidor){
-        socket = nuevoSocket;
+    public ClienteEnviaUDP(String servidor, int puertoServidor) throws SocketException {
+        socket = new DatagramSocket();
         SERVER=servidor;
         PUERTO_SERVER=puertoServidor;
     }

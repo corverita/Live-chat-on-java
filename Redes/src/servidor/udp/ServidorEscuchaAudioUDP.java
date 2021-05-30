@@ -14,8 +14,6 @@ public class ServidorEscuchaAudioUDP extends Thread{
     private SourceDataLine sourceDataLine;
     private DatagramPacket paquete;
     private byte[] datos;
-    private AudioInputStream ais;
-
     public ServidorEscuchaAudioUDP(int puerto) throws SocketException {
         socket=new DatagramSocket(puerto);
         activo=true;
@@ -43,7 +41,6 @@ public class ServidorEscuchaAudioUDP extends Thread{
                 if(mensaje.equalsIgnoreCase("-1")){
                     sourceDataLine.drain();
                 }else {
-                    ais=new AudioInputStream(bais,format,paquete.getLength());
                     toSpeaker(paquete.getData());
                 }
             }

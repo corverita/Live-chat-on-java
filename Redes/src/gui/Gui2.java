@@ -37,12 +37,12 @@ public class Gui2 extends javax.swing.JFrame {
     /**
      * Creates new form Gui
      */
-    public Gui2(DatagramSocket socketEscucha, String ipServer, int puertoServerMensajes, int puertoClienteMensajes, int puertoServerVideo, int puertoClienteVideo, int puertoServerArchivos, int puertoServerAudio, int puertoClienteAudio) throws Exception {
+    public Gui2(String ipServer, int puertoServerMensajes, int puertoClienteMensajes, int puertoServerVideo, int puertoClienteVideo, int puertoServerArchivos, int puertoServerAudio, int puertoClienteAudio) throws Exception {
         initComponents();
         this.ipServer=ipServer;
         labelRuta.setText("No hay un archivo seleccionados");
         webcamGUI=new WebcamGUI(ipServer,puertoServerVideo,puertoClienteVideo,puertoServerAudio,puertoClienteAudio);
-        clienteEnviaUDP=new ClienteEnviaUDP(socketEscucha,ipServer,puertoServerMensajes);
+        clienteEnviaUDP=new ClienteEnviaUDP(ipServer,puertoServerMensajes);
         servidorEscuchaUDP =new ServidorEscuchaUDP(puertoClienteMensajes,textAreaRecibidos,textAreaEnviados);
         puertoServidorArchivos=puertoServerArchivos;
         servidorEscuchaUDP.start();
@@ -313,9 +313,11 @@ public class Gui2 extends javax.swing.JFrame {
         if(mensaje.isEmpty()){
             JOptionPane.showMessageDialog(null, "Tu mensaje está vacío");
             return;
-        }String mensajesRecibidos=textAreaRecibidos.getText();
+        }
+        String mensajesRecibidos=textAreaRecibidos.getText();
         mensajesRecibidos+="\n";
         textAreaRecibidos.setText(mensajesRecibidos);
+
         String mensajesEnviados=textAreaEnviados.getText();
         mensajesEnviados+=mensaje+"\n";
         textAreaEnviados.setText(mensajesEnviados);

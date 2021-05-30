@@ -22,17 +22,18 @@ public class ClienteEnviaVideoUDP extends Thread{
 	private boolean activo;
 	protected final String SERVER;
 
-	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws UnknownHostException {
+	public ClienteEnviaVideoUDP(String servidor, int puertoServidor, JLabel webcamUsuario) throws UnknownHostException, SocketException {
 		SERVER=servidor;
 		PUERTO_SERVER=puertoServidor;
 		address=InetAddress.getByName(SERVER);
 		videoUsuario=webcamUsuario;
 		activo=true;
+		socket=new DatagramSocket();
 	}
 
 	public void run(){
 		try{
-			socket=new DatagramSocket();
+
 			webcam=Webcam.getDefault();
 			webcam.setViewSize(new Dimension(320,240));
 			webcam.open();

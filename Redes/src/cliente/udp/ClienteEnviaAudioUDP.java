@@ -21,21 +21,18 @@ public class ClienteEnviaAudioUDP extends Thread{
 
 
     public ClienteEnviaAudioUDP(String ipServer, int puertoServer) throws SocketException, UnknownHostException {
-        socket=new DatagramSocket();
         this.ipServer=ipServer;
         this.puertoServer=puertoServer;
         activo=true;
         address=InetAddress.getByName(ipServer);
+        socket=new DatagramSocket();
+        format = new AudioFormat(48000.0f, 16, 2, true, false);
+        info = new DataLine.Info(TargetDataLine.class, format);
     }
 
     @Override
     public void run() {
         try{
-            socket=new DatagramSocket();
-            format = new AudioFormat(48000.0f, 16, 2, true, false);
-            micro = AudioSystem.getTargetDataLine(format);
-            info = new DataLine.Info(TargetDataLine.class, format);
-
             micro=(TargetDataLine) AudioSystem.getLine(info);
             micro.open(format);
             micro.start();
@@ -48,7 +45,6 @@ public class ClienteEnviaAudioUDP extends Thread{
                 dsize = micro.read(data,0,data.length);
                 paquete = new DatagramPacket(data,data.length,address,puertoServer);
                 socket.send(paquete);
-
             }catch (Exception e){
                 e.printStackTrace();
             }

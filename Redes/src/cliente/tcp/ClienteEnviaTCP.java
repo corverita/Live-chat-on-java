@@ -48,6 +48,7 @@ public class ClienteEnviaTCP extends Thread{
             Timer timer=new Timer();
             timer.scheduleAtFixedRate(temp,0,1000);
 
+
             bytes=new byte[1024*4];
             while ((in = bis.read(bytes)) != -1) {
                 dos.write(bytes, 0, in);
@@ -56,18 +57,17 @@ public class ClienteEnviaTCP extends Thread{
                 if(segundoAnterior+1==temp.contadorSegundos){
                     segundoAnterior=temp.contadorSegundos;
 
-                    int bytesSegundo=bytes.length*vecesEnviado;
-                    vecesEnviado=0;
+                    long leido= (long) vecesEnviado *bytes.length;
+                    long restante=archivo.length() - leido;
 
-                    double bandwidth=((bytesSegundo/1048576.0)*8.0);
-                    long mBArchivo=((archivo.length()*8)/(1024*1024));
-
-                    double transmissionTime=mBArchivo/bandwidth;
+                    long bandwidth=leido*8/1024/1024/segundoAnterior; //Bytes bps Kbps Mbps
+                    long transmissionTime=(archivo.length()*8/1024/1024)/bandwidth; // Bytes bps Kbps Mbps
+                    long tiempoRestante=(restante*8/1024/1024)/bandwidth;// Bytes bps Kbps
 
                     labelLatencia.setText(transmissionTime+"s");
                     labelTTranscurrido.setText(segundoAnterior+"s");
                     labelBandwidth.setText(bandwidth+"Mbps");
-                    labelTiempoRestante.setText(transmissionTime-segundoAnterior+"s");
+                    labelTiempoRestante.setText(tiempoRestante+"s");
                 }
             }
             labelLatencia.setText("Enviado");
